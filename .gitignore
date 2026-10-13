@@ -1,0 +1,7 @@
+build/
+.cache/
+.vscode/*.log
+build/*.log
+build/*.json
+build/*.txt
+build/*
