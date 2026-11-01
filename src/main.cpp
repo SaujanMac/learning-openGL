@@ -43,6 +43,12 @@ int main() {
     // use glBufferData to allocate memory for the buffer object
     glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), vertices, GL_STATIC_DRAW);
 
+    // Specify the layout of the vertex data
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
+
+    // Enable the vertex attribute array for the position data
+    glEnableVertexAttribArray(0);
+
     while (!glfwWindowShouldClose(window)) {
         glClearColor(0.08F, 0.10F, 0.14F, 1.0F);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -51,7 +57,7 @@ int main() {
         glDrawArrays(GL_TRIANGLES, 0, 3); // Draw the triangle
 
         
-
+        
 
 
         /* Swap front and back buffers */
