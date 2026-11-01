@@ -10,7 +10,7 @@
  * This function is a placeholder and should be implemented to compile shaders.
  */
 static unsigned int CompileShader(unsigned int type, const std::string& source){
-    unsigned int shaderID = glCreateShader(GL_VERTEX_SHADER);
+    unsigned int shaderID = glCreateShader(type); // create a shader object of the specified type (vertex or fragment)
 
     if (shaderID == 0) {
         std::cerr << "Error creating shader!" << std::endl;
@@ -96,7 +96,7 @@ int main() {
     float vertices[6] = {
         -0.5F, -0.5F,
          0.5F, -0.5F,
-         0.5F,  0.5F
+         0.0F,  0.5F
     };
 
     unsigned int vbo; // vbo object: Vertex Buffer Object
@@ -107,11 +107,32 @@ int main() {
     // use glBufferData to allocate memory for the buffer object
     glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), vertices, GL_STATIC_DRAW);
 
+    // Enable the vertex attribute array for the position data
+    glEnableVertexAttribArray(0);
+
     // Specify the layout of the vertex data
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
 
-    // Enable the vertex attribute array for the position data
-    glEnableVertexAttribArray(0);
+    // Create and compile the shader program
+    std::string vertexShaderSource = R"(
+        #version 330 core
+        layout(location = 0) in vec4 position;
+        void main() {
+            gl_Position = position;
+        }
+    )";
+
+    std::string fragmentShaderSource = R"(
+        #version 330 core
+        layout(location = 0) out vec4 color;
+        void main() {
+            color = vec4(1.0, 0.0, 0.0, 1.0);
+        }
+    )";
+
+    unsigned int shaderProgram = CreateShader(vertexShaderSource, fragmentShaderSource);
+    glUseProgram(shaderProgram); // Use the shader program
+
 
     while (!glfwWindowShouldClose(window)) {
         glClearColor(0.08F, 0.10F, 0.14F, 1.0F);
@@ -130,6 +151,8 @@ int main() {
         glfwPollEvents();
     }
 
+    glDeleteProgram(shaderProgram); // Delete the shader program
+    glDeleteBuffers(1, &vbo); // Delete the VBO
     glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
