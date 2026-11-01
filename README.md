@@ -11,6 +11,7 @@ Installed system dependencies:
 | GCC / G++ | 13.3.0 | `/usr/bin/g++` |
 | CMake | 4.4.4 | `/usr/bin/cmake` |
 | GDB | System installed | Used by the VS Code debugger |
+| Valgrind | Optional | Memory leak monitoring |
 | GLFW runtime | 3.3.10-1build1 | `/usr/lib/x86_64-linux-gnu/libglfw.so.3` |
 | GLFW development package | 3.3.10-1build1 | `/usr/include/GLFW/glfw3.h` |
 | GLFW CMake package | 3.3.10-1build1 | `/usr/lib/x86_64-linux-gnu/cmake/glfw3/` |
@@ -75,6 +76,30 @@ Run it with:
 ```
 
 The application source is [src/main.cpp](src/main.cpp). It creates an 800x600 GLFW window and renders a triangle using the compatibility OpenGL API.
+
+## Monitor Memory Leaks with Valgrind
+
+Install Valgrind on Ubuntu:
+
+```bash
+sudo apt install valgrind
+```
+
+Build and run the leak check from the project root:
+
+```bash
+cmake --build build
+valgrind \
+  --leak-check=full \
+  --show-leak-kinds=all \
+  --track-origins=yes \
+  --errors-for-leak-kinds=definite,indirect \
+  --error-exitcode=1 \
+  --log-file=build/valgrind.log \
+  ./build/bin/opengl
+```
+
+The application remains open while the check runs; close its window to produce the final report. A non-zero exit status indicates definite or indirect leaks, and the complete report is saved to `build/valgrind.log`. In VS Code, run the `Valgrind: leak check` task from the Command Palette or the Terminal menu.
 
 ## CMake Configuration
 

@@ -12,6 +12,28 @@
             "problemMatcher": [
                 "$gcc"
             ]
+        },
+        {
+            "label": "Valgrind: leak check",
+            "type": "shell",
+            "dependsOn": "CMake: build",
+            "command": "valgrind",
+            "args": [
+                "--leak-check=full",
+                "--show-leak-kinds=all",
+                "--track-origins=yes",
+                "--errors-for-leak-kinds=definite,indirect",
+                "--error-exitcode=1",
+                "--log-file=build/valgrind.log",
+                "${workspaceFolder}/build/bin/opengl"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            }
         }
     ]
 }
