@@ -5,6 +5,70 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
+/* 
+ * Compile a shader from source code and return its ID.
+ * This function is a placeholder and should be implemented to compile shaders.
+ */
+static unsigned int CompileShader(unsigned int type, const std::string& source){
+    unsigned int shaderID = glCreateShader(GL_VERTEX_SHADER);
+
+    if (shaderID == 0) {
+        std::cerr << "Error creating shader!" << std::endl;
+        return 0;
+    }
+
+    const char* src = source.c_str(); // return a pointer to the underlying array of characters in the string.
+    glShaderSource(shaderID, 1, &src, nullptr); // set the source code in shader
+    glCompileShader(shaderID); // compile the shader
+
+    // Check for compilation errors
+    int success;
+    glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
+
+    if (success == GL_FALSE) {
+        int length; // get the length of the error message
+        glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &length); 
+        char* message = (char*)alloca(length * sizeof(char)); // allocate memory for the error message
+        
+        glGetShaderInfoLog(shaderID, length, &length, message); // get the error message
+        
+        std::cerr << "Failed to compile shader!" << (type == GL_VERTEX_SHADER ? "vertex" : "fragment")<< " shader!" << std::endl;
+        std::cerr << message << std::endl;
+        
+        glDeleteShader(shaderID); // delete the shader object
+
+        return 0;
+    }
+
+    return shaderID;
+}
+
+/* 
+    
+ * Create a shader program and return its ID.
+ * This function is a placeholder and should be implemented to create and compile shaders.
+*/
+static unsigned int CreateShader(const std::string& vertexShaderSource, const std::string& fragmentShaderSource)
+{
+    // Create a shader program
+    unsigned int program = glCreateProgram();
+    unsigned int vertexShader = CompileShader(GL_VERTEX_SHADER, vertexShaderSource);
+    unsigned int fragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
+
+    // Attach the compiled shaders to the program and link it
+    glAttachShader(program, vertexShader);
+    glAttachShader(program, fragmentShader);
+    glLinkProgram(program);
+    glValidateProgram(program);
+
+    // Delete the shaders as they are no longer needed after linking
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    return program; // Return the program ID
+}
+
+
 int main() {
     if (!glfwInit()) {
         return EXIT_FAILURE;
@@ -57,7 +121,7 @@ int main() {
         glDrawArrays(GL_TRIANGLES, 0, 3); // Draw the triangle
 
         
-        
+         
 
 
         /* Swap front and back buffers */
