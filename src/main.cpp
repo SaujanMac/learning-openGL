@@ -159,10 +159,15 @@ int main()
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 
     // Define the vertices for a triangle
-    float vertices[6] = {
+    float vertices[] = {
         -0.5F, -0.5F,
         0.5F, -0.5F,
-        0.0F, 0.5F};
+        0.5F, 0.5F,
+
+        0.5F, 0.5F,
+        -0.5F, 0.5F,
+        -0.5F, -0.5F
+    };
 
     unsigned int vbo;      // vbo object: Vertex Buffer Object
     glGenBuffers(1, &vbo); // get a vbo object
@@ -170,7 +175,7 @@ int main()
     // Bind the vbo object to the GL_ARRAY_BUFFER target
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     // use glBufferData to allocate memory for the buffer object
-    glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), vertices, GL_STATIC_DRAW);
 
     // Enable the vertex attribute array for the position data
     glEnableVertexAttribArray(0);
@@ -192,7 +197,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Only draws the vbo object, which is bound to the GL_ARRAY_BUFFER target. See glBindBuffer above.
-        glDrawArrays(GL_TRIANGLES, 0, 3); // Draw the triangle
+        glDrawArrays(GL_TRIANGLES, 0, 6); // Draw the triangle
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
