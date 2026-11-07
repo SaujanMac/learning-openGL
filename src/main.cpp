@@ -163,12 +163,16 @@ int main()
         -0.5F, -0.5F,
         0.5F, -0.5F,
         0.5F, 0.5F,
-
-        0.5F, 0.5F,
         -0.5F, 0.5F,
-        -0.5F, -0.5F
     };
 
+    // Define the indices for the triangle
+    unsigned int indices[]= {
+        0, 1, 2, // first triangle
+        2, 3, 0 // second triangle
+    };
+
+    // Creating a Vertex Buffer Object (VBO) to store the vertex data on the GPU
     unsigned int vbo;      // vbo object: Vertex Buffer Object
     glGenBuffers(1, &vbo); // get a vbo object
 
@@ -183,6 +187,21 @@ int main()
     // Specify the layout of the vertex data
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
 
+    
+    // Creating an Index Buffer Object (IBO) to store the index data on the GPU
+    unsigned int ibo;      // ibo object: Index Buffer Object
+    glGenBuffers(1, &ibo); // get a ibo object
+
+    // Bind the ibo object to the GL_ELEMENT_ARRAY_BUFFER target
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    // use glBufferData to allocate memory for the buffer object
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+
+    // Enable the vertex attribute array for the position data
+    glEnableVertexAttribArray(0);
+
+    // Specify the layout of the vertex data
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
     // Parse the shader file and get the vertex and fragment shader source code
     ShaderProgramSource shaderSource = ParseShader("assets/shaders/Basic.shader");
     
@@ -196,9 +215,7 @@ int main()
         glClearColor(0.08F, 0.10F, 0.14F, 1.0F);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // Only draws the vbo object, which is bound to the GL_ARRAY_BUFFER target. See glBindBuffer above.
-        glDrawArrays(GL_TRIANGLES, 0, 6); // Draw the triangle
-
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr); // Draw the triangle using the index buffer
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
         // Poll for and process events
@@ -207,6 +224,7 @@ int main()
 
     glDeleteProgram(shaderProgram); // Delete the shader program
     glDeleteBuffers(1, &vbo);       // Delete the VBO
+    glDeleteBuffers(1, &ibo);       // Delete the IBO
     glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
